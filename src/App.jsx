@@ -3,6 +3,7 @@ import ThankYouImage from './assets/images/icon-thank-you.svg'
 import AcadaImage from './assets/images/icon-arcade.svg'
 import AdvanceImage from './assets/images/icon-advanced.svg'
 import ProImage from './assets/images/icon-pro.svg'
+import CheckImage from './assets/images/icon-checkmark.svg'
 import ToggleleftImage from './assets/images/toggle-left.svg'
 import TogglerightImage from './assets/images/toggle-right.svg'
 
@@ -18,7 +19,10 @@ function App() {
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [phoneError, setPhoneError] = useState("");
-
+  const [isMonthly, setIsMonthly] = useState(true);
+  const [isYearly, setIsYearly] = useState(true);
+  const [isClick, setIsClick] = useState(true)
+  
   useEffect(() => {
     const storedData = localStorage.getItem("formData");
     if (storedData) {
@@ -77,27 +81,13 @@ function App() {
     return true;
   };
 
-  // const nextStep = () => {
-  //   if (validateStep()) {
-  //     setCurrentStep(currentStep + 1);
-  //   }
-  // };
-
-  // const prevStep = () => {
-  //   setCurrentStep(currentStep - 1);
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   // Handle form submission logic here
-  // };
-
-
   const nextStep = () => {
     if (validateStep()) {
       setCurrentStep(currentStep + 1);
+      setSidebarStep(currentStep + 1); // Update the sidebar step as well
     }
-};
+  };
+  
 
   const prevStep = () => {
     setCurrentStep(currentStep - 1);
@@ -107,10 +97,16 @@ function App() {
     e.preventDefault();
   };
 
+  const ToggleImage = () => {
+    setIsMonthly(!isMonthly);
+    setIsYearly(!isYearly)
+    setIsClick(!isClick)
+  };
+
   return (
     <>
       <div className="border-2 max-w-3xl w-full h-[500px] m-auto mt-10 rounded-md p-4 flex justify-center space-x-5">
-        <div className="w-1/3 h-full border-2 rounded-md bg-[url('./assets/images/bg-sidebar-desktop.svg')] bg-cover bg-no-repeat bg-center text-white">
+        <div className="w-1/3 h-full border-none rounded-md bg-[url('./assets/images/bg-sidebar-desktop.svg')] bg-cover bg-no-repeat bg-center text-white">
           {/* Add step navigation here */}
           <div className="flex justify-start ml-2 items-center space-y-3 relative mt-6">
             <div className="block">
@@ -152,7 +148,7 @@ function App() {
               <h1 className="text-3xl font-bold text-slate-700">Personal info</h1>
               <p className="text-sm mb-8 mt-3">Please provide your name, email address, and phone number</p>
 
-              <form onSubmit={nextStep} id="1">
+              <form onSubmit={nextStep} onChange={() => goToStep(1)}>
                 <label htmlFor="name" >Name</label>
                 <input
                   className="w-full h-10 border rounded-md p-2"
@@ -195,7 +191,7 @@ function App() {
                 <button
                   type="submit"
                   onClick={nextStep}
-                  className="bg-blue-950 p-3 text-slate-100 rounded-md ml-[335px] mt-15 "
+                  className="bg-blue-950 p-3 text-slate-100 rounded-md ml-[335px] mt-14 "
                 >
                   Next Step
                 </button>
@@ -205,43 +201,46 @@ function App() {
 
           {/* Add forms for other steps Select Your Plan*/}
           {currentStep === 2 && (
-          <form onSubmit={nextStep} id="2">
+          <form onSubmit={nextStep} >
             <h1 className="text-3xl font-bold text-slate-700">Select Your Plan </h1>
               <p className="text-sm mb-8 mt-3">You have an option for monthly or yearly</p>
             <div className="flex justify-center items-center gap-x-3">
-              <div className="border-2 p-3 w-1/3 h-32 rounded-md text-center">
+              <div className="border-2 p-3 w-1/3 h-36 rounded-md text-center">
                 <div className="mt-2">
                   <img className="m-auto" src={AcadaImage} alt={"Acada image"} />
                 </div>
                 <div className="mt-2">
                   <strong>Arcade</strong>
-                  <p>$9/mo</p>
+                  <p>$9/{!isMonthly ? "mo" : "yr"}</p>
+                  <span className="text-xs text-slate-600 font-bold">{isMonthly ? "2 months free" : ""}</span>
                 </div>
               </div>
-              <div className="border-2 p-3 w-1/3 h-32 rounded-md text-center">
+              <div className="border-2 p-3 w-1/3 h-36 rounded-md text-center">
                 <div className="mt-2">
                   <img className="m-auto" src={AdvanceImage} alt={"Advance image"} />
                 </div>
                 <div className="mt-2">
                   <strong>Advance</strong>
-                  <p>$9/mo</p>
+                  <p>$9/{!isMonthly ? "mo" : "yr"}</p>
+                  <span className="text-xs text-slate-600 font-bold">{isMonthly ? "2 months free" : ""}</span>
                 </div>
               </div>
-              <div className="border-2 p-3 w-1/3 h-32 rounded-md  text-center">
+              <div className="border-2 p-3 w-1/3 h-36 rounded-md text-center">
                 <div className="mt-2 text-center">
                   <img className="m-auto" src={ProImage} alt={"pro Image"} />
                 </div>
                 <div className="mt-2 ">
                   <strong>Pro</strong>
-                  <p>$9/mo</p>
+                  <p>$9/{!isMonthly ? "mo" : "yr"}</p>
+                  <span className="text-xs text-slate-600 font-bold">{isMonthly ? "2 months free" : ""}</span>
                 </div>
               </div>
             </div>
               <div className="block mt-3">
                 <div className="flex justify-center items-center p-2 bg-slate-200 w-full rounded-md gap-x-3">
-                  <span>Monthly</span>
-                  <img src={ToggleleftImage} alt={"Ceck Image"} />
-                  <span>Yearly</span>
+                  <span className="hover:text-slate-800 hover:font-bold cursor-pointer" onClick={ToggleImage}>Monthly</span>
+                  <img src={isMonthly ? ToggleleftImage : TogglerightImage} alt={"Ceck Image"} />
+                  <span className="hover:text-slate-800 hover:font-bold cursor-pointer" onClick={ToggleImage}>Yearly</span>
                 </div>
               </div>
             <div className="flex justify-between items-center">
@@ -265,31 +264,39 @@ function App() {
 
           {/* {Add another form Pick Add Ons} */}
           {currentStep === 3 && (
-          <form onSubmit={nextStep} id="3">
+          <form onSubmit={nextStep}>
             <h1 className="text-3xl font-bold text-slate-700">Pick Add Ons </h1>
             <p className="text-sm mb-8 mt-3">Add-ons help enhabce your gaming experience.</p>
             <div className="">
-              <div className="flex justify-between items-center w-full p-2 bg-slate-200 rounded-md">
-                <input type="checkbox" />
+              <div className="flex justify-between items-center border w-full p-2 hover:bg-slate-200 rounded-md">
+                <div className="p-1 border text-white hover:bg-blue-600 rounded-md ">
+                  <img src={ CheckImage } alt={"check image"} />
+                </div>
                 <div>
-                  <p>Online Sevice</p>
+                  <p className="font-bold">Online Sevice</p>
                   <p>Access to multiple games</p>
                 </div>
                 <p>+$1/mo</p>
               </div>
-              <div className="flex justify-between items-center w-full p-2 bg-slate-200 rounded-md mt-3">
-                <input type="checkbox" />
+              <div className="flex justify-between items-center border w-full p-2 hover:bg-slate-200 rounded-md mt-3">
+                <div className="p-1 border text-white hover:bg-blue-600 rounded-md ">
+                  <img src={ CheckImage } alt={"check image"} />
+                </div>
+
                 <div>
-                  <p>Online Sevice</p>
-                  <p>Access to multiple games</p >
+                  <p className="font-bold">Large Storage </p>
+                  <p>Extra 1TB of cloud save</p >
                 </div>
                 <p>+$1/mo</p>
               </div>
-              <div className="flex justify-between items-center w-full p-2 bg-slate-200 rounded-md mt-3">
-                <input type="checkbox" />
+              <div className={`flex justify-between items-center border w-full p-2 ${isClick &&'hover:bg-slate-200' } rounded-md mt-3`}>
+                <div className="p-1 border text-white hover:bg-blue-600 rounded-md">
+                  <img src={ CheckImage } alt={"check image"} />
+                </div>
+
                 <div>
-                  <p>Online Sevice</p>
-                  <p>Access to multiple games</p>
+                  <p className="font-bold">Customizable profile </p>
+                  <p>Custom theme on your profile</p>
                 </div>
                 <p>+$1/mo</p>
               </div>
